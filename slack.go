@@ -105,7 +105,7 @@ func (c *Client) PostMessage(req MessageRequest) error {
 		return err
 	}
 
-  fmt.Println(body)
+  fmt.Println(msgResp)
 	if msgResp.Status != ResponseStatusSent {
 		return errors.New("PostMessage: response 'status' field was not 'sent'.")
 	}
