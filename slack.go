@@ -2,7 +2,7 @@ package slack
 
 import (
   "fmt"
-  "net/url",
+  "net/url"
   "net/http"
 )
 
