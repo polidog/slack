@@ -5,8 +5,9 @@ import (
   )
 
 func main() {
-	c := hipchat.Client{AuthToken: "xxxoxp-2466313728-2466313730-2514368816-382e90"}
-	req := hipchat.MessageRequest{
+	c := slack.Client{}
+	req := slack.MessageRequest{
+    AuthToken: "xxxoxp-2466313728-2466313730-2514368816-382e90"
 		Channel:        "general",
 		Username:          "polidog bot",
 		Message:       "カップラーメンおいしいお"

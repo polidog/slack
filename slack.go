@@ -4,6 +4,9 @@ import (
   "fmt"
   "net/url"
   "net/http"
+  "errors"
+  "io/ioutil"
+  "encoding/json"
 )
 
 const (
@@ -29,6 +32,8 @@ type MessageRequest struct {
 
   Username string
 
+  AuthToken string
+
   Message string
 
   MessageFormat string
@@ -53,21 +58,22 @@ type ErrorResponse struct {
 
 
 type Client struct {
-  AuthToken string
+
 }
 
 
 
-func urlValuesFromMessageRequest(req MessageRequest) (url.Values, err) {
-  if len(req.Channel) == 0 || len(req.From) || len(req.Message) {
+func urlValuesFromMessageRequest(req MessageRequest) (url.Values, error) {
+
+  if len(req.Channel) == 0 || len(req.Username) == 0 || len(req.Message) == 0 {
     return nil, errors.New("This Channel, From, and Message fields are all required.")
   }
 
-  payload := url.Values {
-    "token": rqq.AuthToken
-    "channel": req.Channel
-    "username": req.Username
-    "text": req.Message
+  payload := url.Values{
+    "token": {req.AuthToken},
+    "channel": {req.Channel},
+    "username": {req.Username},
+    "text": {req.Message},
   }
 
   return payload, nil
@@ -78,8 +84,11 @@ func (c *Client) PostMessage(req MessageRequest) error {
   uri := fmt.Sprintf("%s/chat.postMessage")
 
   payload, err := urlValuesFromMessageRequest(req)
+  if err != nil {
+    return err
+  }
 
-  resp, nil = http.PostForm(uri, payload)
+  resp, err := http.PostForm(uri, payload)
   if err != nil {
     return err
   }
@@ -91,13 +100,13 @@ func (c *Client) PostMessage(req MessageRequest) error {
       return err
   }
 
-  if resp.StatusCode != 200 {
-    var errResp ErrorResponse
-    if err := json.Unmarshal(body, &errResp); err != nil {
-			return nil, err
-		}
-		return nil, errors.New(errResp.Error.Message)
-  }
+  msgResp := &struct{ Status string }{}
+	if err := json.Unmarshal(body, msgResp); err != nil {
+		return err
+	}
+	if msgResp.Status != ResponseStatusSent {
+		return errors.New("PostMessage: response 'status' field was not 'sent'.")
+	}
 
   return nil
 }

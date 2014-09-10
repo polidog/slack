@@ -12,8 +12,8 @@ type Message struct {
   ISODate string `json:"date"`
 
   From struct {
-    Name: string
-    UserId: interface{} `json:"date"`
+    Name string
+    UserId interface{} `json:"date"`
   }
 
   Message string
