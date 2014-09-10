@@ -104,6 +104,8 @@ func (c *Client) PostMessage(req MessageRequest) error {
 	if err := json.Unmarshal(body, msgResp); err != nil {
 		return err
 	}
+
+  fmt.Println(msgResp)
 	if msgResp.Status != ResponseStatusSent {
 		return errors.New("PostMessage: response 'status' field was not 'sent'.")
 	}
