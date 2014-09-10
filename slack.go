@@ -81,7 +81,7 @@ func urlValuesFromMessageRequest(req MessageRequest) (url.Values, error) {
 
 
 func (c *Client) PostMessage(req MessageRequest) error {
-  uri := fmt.Sprintf("%s/chat.postMessage")
+  uri := fmt.Sprintf("%s/chat.postMessage", baseURL)
 
   payload, err := urlValuesFromMessageRequest(req)
   if err != nil {
